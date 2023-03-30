@@ -12,6 +12,23 @@ async function signup(req, res) {
     }
 }
 
+async function signin(req, res) {
+    const { email, password } = req.body;
+
+    try {
+
+        const token = await pacientsServices.signin({ email, password });
+        return res.status(200).send({ token })
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send(error.message);
+    }
+}
+
+
+
 export default {
-    signup
+    signup,
+    signin
 }
