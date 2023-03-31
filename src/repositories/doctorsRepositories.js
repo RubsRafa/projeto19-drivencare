@@ -30,7 +30,8 @@ async function getDoctorBySpecialty(specialty) {
     LEFT JOIN locations l 
       ON l.id = d.id_location 
     LEFT JOIN (SELECT a.id, a.date, a.time, a.id_doctor 
-      FROM appointments a) AS da 
+      FROM appointments a
+      WHERE a.is_available = true) AS da 
         ON da.id_doctor = d.id 
     WHERE spe.specialty = $1
     GROUP BY d.name, d.email, dspe.id_doctor, spe.specialty, l.hospital_name, l.state, l.city, l.street, l.number;
@@ -48,7 +49,8 @@ async function getDoctorByLocation(idLocation) {
     LEFT JOIN locations l 
       ON l.id = d.id_location 
     LEFT JOIN (SELECT a.id, a.date, a.time, a.id_doctor 
-      FROM appointments a) AS da 
+      FROM appointments a
+      WHERE a.is_available = true) AS da 
         ON da.id_doctor = d.id 
     WHERE d.id_location = $1
     GROUP BY d.name, d.email, dspe.id_doctor, spe.specialty, l.hospital_name, l.state, l.city, l.street, l.number;
