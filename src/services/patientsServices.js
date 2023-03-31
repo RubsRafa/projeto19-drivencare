@@ -25,15 +25,20 @@ async function signin({ email, password }){
 }
 
 async function scheduleAppointment(id_appointment, user) {
-    const { rowCount, rows: appointment } = await patientsRepositories.isAppointmentAvailable(id_appointment);
-    if (rowCount) throw errors.notFoundError('This appointment was not found');
+    const { rowCount, rows: [appointment] } = await patientsRepositories.isAppointmentAvailable(id_appointment);
+    
+    if (!rowCount) throw errors.notFoundError('This appointment was not found');
 
+    const { rows: isMyAppointment } = await patientsRepositories.isMyAppointments(user);
+    if(isMyAppointment[0] && isMyAppointment.id_appointment === id_appointment) throw errors.conflictError('You`ve already schedule this appointment');
     if (!appointment.is_available) throw errors.conflictError('This appointment is not available anymore');
-
-    const { rows: isMyAppointment } = await patientsRepositories.myAppointments(user);
-    if(isMyAppointment[0]) throw errors.conflictError('You`ve already schedule this appointment')
-
-    return isMyAppointment
+    
+    await patientsRepositories.scheduleAppointment(id_appointment, user)
+    await patientsRepositories.removeAppointment(id_appointment)
+   
+    const { rows: [myScheduledyAppointments] } = await patientsRepositories.myScheduledyAppointments(id_appointment);
+    
+    return myScheduledyAppointments;
 }
 
 export default {
