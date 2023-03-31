@@ -5,7 +5,7 @@ import pacientsControllers from "../controllers/pacientsControllers.js";
 
 const pacientsRoutes = Router();
 
-pacientsRoutes.post('/pacient/signup', validateSchema(users.pacientSchemaSignUp), pacientsControllers.signup);
-pacientsRoutes.post('/pacient/signin', validateSchema(users.pacientSchemaSignIn), pacientsControllers.signin);
+pacientsRoutes.post('/signup', validateSchema(users.pacientSchemaSignUp), pacientsControllers.signup);
+pacientsRoutes.post('/signin', validateSchema(users.pacientSchemaSignIn), pacientsControllers.signin);
 
 export default pacientsRoutes;

@@ -21,37 +21,23 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: schedules; Type: TABLE; Schema: public; Owner: -
+-- Name: appointments; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.schedules (
+CREATE TABLE public.appointments (
     id integer NOT NULL,
-    id_pacient integer NOT NULL,
     id_doctor integer NOT NULL,
     date date NOT NULL,
     "time" time without time zone NOT NULL,
-    status boolean,
     created_at timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
 --
--- Name: schedules_history; Type: TABLE; Schema: public; Owner: -
+-- Name: appointments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.schedules_history (
-    id integer NOT NULL,
-    id_shedule integer NOT NULL,
-    status boolean DEFAULT true,
-    created_at timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
---
--- Name: schedules_history_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.schedules_history_id_seq
+CREATE SEQUENCE public.appointments_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -61,10 +47,155 @@ CREATE SEQUENCE public.schedules_history_id_seq
 
 
 --
--- Name: schedules_history_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: appointments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.schedules_history_id_seq OWNED BY public.schedules_history.id;
+ALTER SEQUENCE public.appointments_id_seq OWNED BY public.appointments.id;
+
+
+--
+-- Name: doctors; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.doctors (
+    id integer NOT NULL,
+    name text NOT NULL,
+    email text NOT NULL,
+    password text NOT NULL,
+    id_location integer NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: doctors_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.doctors_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: doctors_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.doctors_id_seq OWNED BY public.doctors.id;
+
+
+--
+-- Name: doctors_specialties; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.doctors_specialties (
+    id integer NOT NULL,
+    id_specialty integer NOT NULL,
+    id_doctor integer NOT NULL
+);
+
+
+--
+-- Name: doctors_specialties_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.doctors_specialties_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: doctors_specialties_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.doctors_specialties_id_seq OWNED BY public.doctors_specialties.id;
+
+
+--
+-- Name: locations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.locations (
+    id integer NOT NULL,
+    hospital_name text NOT NULL,
+    state text NOT NULL,
+    city text NOT NULL,
+    street text NOT NULL,
+    number text NOT NULL
+);
+
+
+--
+-- Name: locations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.locations_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: locations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.locations_id_seq OWNED BY public.locations.id;
+
+
+--
+-- Name: patients; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.patients (
+    id integer NOT NULL,
+    name text NOT NULL,
+    email text NOT NULL,
+    password text NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: patients_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.patients_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: patients_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.patients_id_seq OWNED BY public.patients.id;
+
+
+--
+-- Name: schedules; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.schedules (
+    id integer NOT NULL,
+    id_patient integer NOT NULL,
+    id_appointment integer NOT NULL,
+    id_status integer DEFAULT 1 NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL
+);
 
 
 --
@@ -120,22 +251,22 @@ ALTER SEQUENCE public.sessions_doctors_id_seq OWNED BY public.sessions_doctors.i
 
 
 --
--- Name: sessions_pacients; Type: TABLE; Schema: public; Owner: -
+-- Name: sessions_patients; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.sessions_pacients (
+CREATE TABLE public.sessions_patients (
     id integer NOT NULL,
-    id_pacient integer NOT NULL,
+    id_patient integer NOT NULL,
     token text NOT NULL,
     created_at timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
 --
--- Name: sessions_pacients_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: sessions_patients_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.sessions_pacients_id_seq
+CREATE SEQUENCE public.sessions_patients_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -145,10 +276,10 @@ CREATE SEQUENCE public.sessions_pacients_id_seq
 
 
 --
--- Name: sessions_pacients_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: sessions_patients_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.sessions_pacients_id_seq OWNED BY public.sessions_pacients.id;
+ALTER SEQUENCE public.sessions_patients_id_seq OWNED BY public.sessions_patients.id;
 
 
 --
@@ -182,24 +313,20 @@ ALTER SEQUENCE public.specialties_id_seq OWNED BY public.specialties.id;
 
 
 --
--- Name: users_doctors; Type: TABLE; Schema: public; Owner: -
+-- Name: status; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.users_doctors (
+CREATE TABLE public.status (
     id integer NOT NULL,
-    name text NOT NULL,
-    email text NOT NULL,
-    password text NOT NULL,
-    id_specialty integer NOT NULL,
-    created_at timestamp without time zone DEFAULT now() NOT NULL
+    status text NOT NULL
 );
 
 
 --
--- Name: users_doctors_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: status_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.users_doctors_id_seq
+CREATE SEQUENCE public.status_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -209,43 +336,45 @@ CREATE SEQUENCE public.users_doctors_id_seq
 
 
 --
--- Name: users_doctors_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: status_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.users_doctors_id_seq OWNED BY public.users_doctors.id;
-
-
---
--- Name: users_pacients; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.users_pacients (
-    id integer NOT NULL,
-    name text NOT NULL,
-    email text NOT NULL,
-    password text NOT NULL,
-    created_at timestamp without time zone DEFAULT now() NOT NULL
-);
+ALTER SEQUENCE public.status_id_seq OWNED BY public.status.id;
 
 
 --
--- Name: users_pacients_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: appointments id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.users_pacients_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+ALTER TABLE ONLY public.appointments ALTER COLUMN id SET DEFAULT nextval('public.appointments_id_seq'::regclass);
 
 
 --
--- Name: users_pacients_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: doctors id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.users_pacients_id_seq OWNED BY public.users_pacients.id;
+ALTER TABLE ONLY public.doctors ALTER COLUMN id SET DEFAULT nextval('public.doctors_id_seq'::regclass);
+
+
+--
+-- Name: doctors_specialties id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.doctors_specialties ALTER COLUMN id SET DEFAULT nextval('public.doctors_specialties_id_seq'::regclass);
+
+
+--
+-- Name: locations id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.locations ALTER COLUMN id SET DEFAULT nextval('public.locations_id_seq'::regclass);
+
+
+--
+-- Name: patients id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.patients ALTER COLUMN id SET DEFAULT nextval('public.patients_id_seq'::regclass);
 
 
 --
@@ -256,13 +385,6 @@ ALTER TABLE ONLY public.schedules ALTER COLUMN id SET DEFAULT nextval('public.sc
 
 
 --
--- Name: schedules_history id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.schedules_history ALTER COLUMN id SET DEFAULT nextval('public.schedules_history_id_seq'::regclass);
-
-
---
 -- Name: sessions_doctors id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -270,10 +392,10 @@ ALTER TABLE ONLY public.sessions_doctors ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
--- Name: sessions_pacients id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: sessions_patients id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.sessions_pacients ALTER COLUMN id SET DEFAULT nextval('public.sessions_pacients_id_seq'::regclass);
+ALTER TABLE ONLY public.sessions_patients ALTER COLUMN id SET DEFAULT nextval('public.sessions_patients_id_seq'::regclass);
 
 
 --
@@ -284,27 +406,44 @@ ALTER TABLE ONLY public.specialties ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- Name: users_doctors id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: status id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.users_doctors ALTER COLUMN id SET DEFAULT nextval('public.users_doctors_id_seq'::regclass);
+ALTER TABLE ONLY public.status ALTER COLUMN id SET DEFAULT nextval('public.status_id_seq'::regclass);
 
 
 --
--- Name: users_pacients id; Type: DEFAULT; Schema: public; Owner: -
+-- Data for Name: appointments; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.users_pacients ALTER COLUMN id SET DEFAULT nextval('public.users_pacients_id_seq'::regclass);
+
+
+--
+-- Data for Name: doctors; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+
+
+--
+-- Data for Name: doctors_specialties; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+
+
+--
+-- Data for Name: locations; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+
+
+--
+-- Data for Name: patients; Type: TABLE DATA; Schema: public; Owner: -
+--
+
 
 
 --
 -- Data for Name: schedules; Type: TABLE DATA; Schema: public; Owner: -
---
-
-
-
---
--- Data for Name: schedules_history; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
@@ -316,7 +455,7 @@ ALTER TABLE ONLY public.users_pacients ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
--- Data for Name: sessions_pacients; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: sessions_patients; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
@@ -328,23 +467,44 @@ ALTER TABLE ONLY public.users_pacients ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
--- Data for Name: users_doctors; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: status; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 
 
 --
--- Data for Name: users_pacients; Type: TABLE DATA; Schema: public; Owner: -
+-- Name: appointments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-INSERT INTO public.users_pacients VALUES (1, 'Ddd', 'd@d.com', '$2b$10$29gaA2H3tKY4/LzISViFJuYPv2gK0qPxqe.YtaQ.kQ6QwNKOXBkPi', '2023-03-30 14:17:35.646852');
+SELECT pg_catalog.setval('public.appointments_id_seq', 1, false);
 
 
 --
--- Name: schedules_history_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: doctors_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.schedules_history_id_seq', 1, false);
+SELECT pg_catalog.setval('public.doctors_id_seq', 1, false);
+
+
+--
+-- Name: doctors_specialties_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.doctors_specialties_id_seq', 1, false);
+
+
+--
+-- Name: locations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.locations_id_seq', 1, false);
+
+
+--
+-- Name: patients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.patients_id_seq', 1, false);
 
 
 --
@@ -362,10 +522,10 @@ SELECT pg_catalog.setval('public.sessions_doctors_id_seq', 1, false);
 
 
 --
--- Name: sessions_pacients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: sessions_patients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.sessions_pacients_id_seq', 1, false);
+SELECT pg_catalog.setval('public.sessions_patients_id_seq', 1, false);
 
 
 --
@@ -376,25 +536,66 @@ SELECT pg_catalog.setval('public.specialties_id_seq', 1, false);
 
 
 --
--- Name: users_doctors_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: status_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.users_doctors_id_seq', 1, false);
-
-
---
--- Name: users_pacients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public.users_pacients_id_seq', 1, true);
+SELECT pg_catalog.setval('public.status_id_seq', 1, false);
 
 
 --
--- Name: schedules_history schedules_history_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: appointments appointments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.schedules_history
-    ADD CONSTRAINT schedules_history_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.appointments
+    ADD CONSTRAINT appointments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: doctors doctors_email_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.doctors
+    ADD CONSTRAINT doctors_email_key UNIQUE (email);
+
+
+--
+-- Name: doctors doctors_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.doctors
+    ADD CONSTRAINT doctors_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: doctors_specialties doctors_specialties_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.doctors_specialties
+    ADD CONSTRAINT doctors_specialties_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: locations locations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.locations
+    ADD CONSTRAINT locations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: patients patients_email_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.patients
+    ADD CONSTRAINT patients_email_key UNIQUE (email);
+
+
+--
+-- Name: patients patients_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.patients
+    ADD CONSTRAINT patients_pkey PRIMARY KEY (id);
 
 
 --
@@ -414,11 +615,11 @@ ALTER TABLE ONLY public.sessions_doctors
 
 
 --
--- Name: sessions_pacients sessions_pacients_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: sessions_patients sessions_patients_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.sessions_pacients
-    ADD CONSTRAINT sessions_pacients_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.sessions_patients
+    ADD CONSTRAINT sessions_patients_pkey PRIMARY KEY (id);
 
 
 --
@@ -430,67 +631,59 @@ ALTER TABLE ONLY public.specialties
 
 
 --
--- Name: users_doctors users_doctors_email_key; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: status status_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.users_doctors
-    ADD CONSTRAINT users_doctors_email_key UNIQUE (email);
-
-
---
--- Name: users_doctors users_doctors_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.users_doctors
-    ADD CONSTRAINT users_doctors_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.status
+    ADD CONSTRAINT status_pkey PRIMARY KEY (id);
 
 
 --
--- Name: users_pacients users_pacients_email_key; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: doctors_specialties fk_doctors_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.users_pacients
-    ADD CONSTRAINT users_pacients_email_key UNIQUE (email);
-
-
---
--- Name: users_pacients users_pacients_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.users_pacients
-    ADD CONSTRAINT users_pacients_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.doctors_specialties
+    ADD CONSTRAINT fk_doctors_id FOREIGN KEY (id_doctor) REFERENCES public.doctors(id);
 
 
 --
--- Name: users_doctors fk_doctors_specialties; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: doctors fk_doctors_location; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.users_doctors
+ALTER TABLE ONLY public.doctors
+    ADD CONSTRAINT fk_doctors_location FOREIGN KEY (id_location) REFERENCES public.locations(id);
+
+
+--
+-- Name: doctors_specialties fk_doctors_specialties; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.doctors_specialties
     ADD CONSTRAINT fk_doctors_specialties FOREIGN KEY (id_specialty) REFERENCES public.specialties(id);
 
 
 --
--- Name: schedules fk_schedules_doctors; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: appointments fk_id_doctor; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.appointments
+    ADD CONSTRAINT fk_id_doctor FOREIGN KEY (id_doctor) REFERENCES public.doctors(id);
+
+
+--
+-- Name: schedules fk_schedule_patient; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.schedules
-    ADD CONSTRAINT fk_schedules_doctors FOREIGN KEY (id_doctor) REFERENCES public.users_doctors(id);
+    ADD CONSTRAINT fk_schedule_patient FOREIGN KEY (id_patient) REFERENCES public.patients(id);
 
 
 --
--- Name: schedules_history fk_schedules_history_schedules; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.schedules_history
-    ADD CONSTRAINT fk_schedules_history_schedules FOREIGN KEY (id_shedule) REFERENCES public.schedules(id);
-
-
---
--- Name: schedules fk_schedules_pacients; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: schedules fk_schedules_status; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.schedules
-    ADD CONSTRAINT fk_schedules_pacients FOREIGN KEY (id_pacient) REFERENCES public.users_pacients(id);
+    ADD CONSTRAINT fk_schedules_status FOREIGN KEY (id_status) REFERENCES public.status(id);
 
 
 --
@@ -498,15 +691,23 @@ ALTER TABLE ONLY public.schedules
 --
 
 ALTER TABLE ONLY public.sessions_doctors
-    ADD CONSTRAINT fk_sessions_doctors FOREIGN KEY (id_doctor) REFERENCES public.users_doctors(id);
+    ADD CONSTRAINT fk_sessions_doctors FOREIGN KEY (id_doctor) REFERENCES public.doctors(id);
 
 
 --
--- Name: sessions_pacients fk_sessions_pacients; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: sessions_patients fk_sessions_patients; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.sessions_pacients
-    ADD CONSTRAINT fk_sessions_pacients FOREIGN KEY (id_pacient) REFERENCES public.users_pacients(id);
+ALTER TABLE ONLY public.sessions_patients
+    ADD CONSTRAINT fk_sessions_patients FOREIGN KEY (id_patient) REFERENCES public.patients(id);
+
+
+--
+-- Name: schedules fk_shcedule_appointment; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.schedules
+    ADD CONSTRAINT fk_shcedule_appointment FOREIGN KEY (id_appointment) REFERENCES public.appointments(id);
 
 
 --
