@@ -41,8 +41,17 @@ async function scheduleAppointment(id_appointment, user) {
     return myScheduledyAppointments;
 }
 
+
+async function getMyAppointments(user) {
+    const { rows: AllMyAppointments } = await patientsRepositories.myAppointments(user)
+
+    return AllMyAppointments;
+}
+
+
 export default {
     create,
     signin,
-    scheduleAppointment
+    scheduleAppointment,
+    getMyAppointments
 }

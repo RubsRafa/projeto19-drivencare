@@ -41,8 +41,24 @@ async function scheduleAppointment(req, res, next) {
 }
 
 
+async function allMyAppointments(req, res, next) {
+    const user = res.locals.user;
+
+    try {
+
+        const allMyAppointments = await patientsServices.getMyAppointments(user);
+
+        return res.status(200).send(allMyAppointments)
+        
+    } catch (err) {
+        next(err);
+    }
+}
+
+
 export default {
     signup,
     signin,
-    scheduleAppointment
+    scheduleAppointment,
+    allMyAppointments
 }

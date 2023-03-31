@@ -9,5 +9,6 @@ const patientsRoutes = Router();
 patientsRoutes.post('/signup', validateSchema(users.patientSchemaSignUp), patientsControllers.signup);
 patientsRoutes.post('/signin', validateSchema(users.patientSchemaSignIn), patientsControllers.signin);
 patientsRoutes.post('/schedule/:id_appointment', validateToken, patientsControllers.scheduleAppointment)
+patientsRoutes.get('/myAppointments', validateToken, patientsControllers.allMyAppointments)
 
 export default patientsRoutes;
