@@ -1,5 +1,8 @@
 import errors from "../errors/index.js";
 import doctorsRepositories from "../repositories/doctorsRepositories.js"
+import bcrypt from 'bcrypt';
+import { v4 as uuidV4 } from 'uuid';
+
 
 async function doctorsName({ name }) {
     const { rowCount, rows: doctor} = await doctorsRepositories.getDoctorByName(name);
@@ -23,8 +26,22 @@ async function doctorsLocation({ idLocation }) {
     return doctor;
 }
 
+async function create({ name, email, password, specialty, location }) {
+    const { rowCount } = await doctorsRepositories.findEmail(email);
+    if(rowCount) throw errors.duplicatedEmailError('User already exists');
+
+    const passwordHashed = bcrypt.hashSync(password, 10);
+    await doctorsRepositories.create({ name, email, password: passwordHashed, location });
+
+    const { rows: [doctor] } = await doctorsRepositories.findEmail(email);
+    await doctorsRepositories.addSpecialty(doctor, { specialty})
+
+}
+
+
 export default {
     doctorsName,
     doctorsSpecialty,
-    doctorsLocation
+    doctorsLocation,
+    create
 }

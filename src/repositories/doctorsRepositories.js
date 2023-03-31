@@ -57,8 +57,24 @@ async function getDoctorByLocation(idLocation) {
     `, [idLocation]);
 }
 
+async function findEmail(email) {
+  return await db.query('SELECT * FROM doctors WHERE email = $1;', [email]);
+}
+
+async function create({ name, email, password, location }) {
+  return await db.query('INSERT INTO doctors (name, email, password, id_location) VALUES ($1, $2, $3, $4);', [name, email, password, location])
+}
+
+async function addSpecialty(doctor,{ specialty }) {
+  console.log(doctor.id, specialty)
+  return await db.query('INSERT INTO doctors_specialties (id_specialty, id_doctor) VALUES ($1, $2);', [specialty, doctor.id]);
+}
+
 export default {
   getDoctorByName,
   getDoctorBySpecialty,
-  getDoctorByLocation
+  getDoctorByLocation,
+  findEmail,
+  create,
+  addSpecialty
 }

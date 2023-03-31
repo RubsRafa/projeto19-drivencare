@@ -39,8 +39,20 @@ async function locationDoctors(req, res, next) {
     }
 }
 
+async function signup(req, res, next) {
+    const { name, email, password, specialty, location } = req.body;
+    try {
+        await doctorsServices.create({ name, email, password, specialty, location });
+        return res.sendStatus(201)
+        
+    } catch (err) {
+        next(err)
+    }
+}
+
 export default {
     nameDoctors,
     specialtyDoctors,
-    locationDoctors
+    locationDoctors,
+    signup
 }
