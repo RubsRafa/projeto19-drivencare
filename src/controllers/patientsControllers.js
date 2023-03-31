@@ -1,9 +1,9 @@
-import pacientsServices from "../services/pacientsServices.js";
+import patientsServices from "../services/patientsServices.js";
 
 async function signup(req, res, next) {
     const { name, email, password } = req.body;
     try {
-        await pacientsServices.create({ name, email, password });
+        await patientsServices.create({ name, email, password });
         return res.sendStatus(201)
         
     } catch (err) {
@@ -16,7 +16,7 @@ async function signin(req, res, next) {
 
     try {
 
-        const token = await pacientsServices.signin({ email, password });
+        const token = await patientsServices.signin({ email, password });
         return res.status(200).send({ token })
         
     } catch (err) {

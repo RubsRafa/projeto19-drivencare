@@ -1,8 +1,8 @@
 import { Router } from "express";
-import pacientsRoutes from "./pacientsRoutes.js";
+import patientsRoutes from "./patientsRoutes.js";
 
 const routes = Router();
 
-routes.use('/pacient', pacientsRoutes);
+routes.use('/patient', patientsRoutes);
 
 export default routes;
