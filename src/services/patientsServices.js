@@ -24,7 +24,20 @@ async function signin({ email, password }){
     return token;
 }
 
+async function scheduleAppointment(id_appointment, user) {
+    const { rowCount, rows: appointment } = await patientsRepositories.isAppointmentAvailable(id_appointment);
+    if (rowCount) throw errors.notFoundError('This appointment was not found');
+
+    if (!appointment.is_available) throw errors.conflictError('This appointment is not available anymore');
+
+    const { rows: isMyAppointment } = await patientsRepositories.myAppointments(user);
+    if(isMyAppointment[0]) throw errors.conflictError('You`ve already schedule this appointment')
+
+    return isMyAppointment
+}
+
 export default {
     create,
-    signin
+    signin,
+    scheduleAppointment
 }

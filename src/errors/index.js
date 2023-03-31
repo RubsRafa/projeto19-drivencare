@@ -5,12 +5,12 @@ function conflictError(message) {
     }
 };
 
-// function unauthorizedError() {
-//     return {
-//         name: "UnauthorizedError",
-//         message: "You must be signed in to continue",
-//     };
-// };
+function unauthorizedError(message) {
+    return {
+        name: "UnauthorizedError",
+        message
+    };
+};
 
 function duplicatedEmailError(message) {
     return {
@@ -25,6 +25,13 @@ function notFoundError(message) {
         message
     };
 };
+
+function forbiddenError(message) {
+    return {
+        name: "ForbiddenError",
+        message
+    }
+}
 
 // function invalidCredentialError() {
 //     return {
@@ -42,9 +49,10 @@ function notFoundError(message) {
 
 export default {
     conflictError,
-    // unauthorizedError,
+    unauthorizedError,
     duplicatedEmailError,
     notFoundError,
+    forbiddenError,
     // invalidCredentialError,
     // unprocessableEntityError
 }

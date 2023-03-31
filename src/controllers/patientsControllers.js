@@ -25,8 +25,24 @@ async function signin(req, res, next) {
 }
 
 
+async function scheduleAppointment(req, res, next) {
+    const { id_appointment } = req.params;
+    const user = res.locals.user;
+
+    try {
+
+        const myAppointments = await patientsServices.scheduleAppointment(id_appointment, user);
+
+        return res.status(200).send(myAppointments)
+        
+    } catch (err) {
+        next(err)
+    }
+}
+
 
 export default {
     signup,
-    signin
+    signin,
+    scheduleAppointment
 }
