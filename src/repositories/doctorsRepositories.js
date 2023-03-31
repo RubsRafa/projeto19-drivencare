@@ -11,7 +11,8 @@ async function getDoctorByName(name) {
     LEFT JOIN locations l 
       ON l.id = d.id_location 
     LEFT JOIN (SELECT a.id, a.date, a.time, a.id_doctor 
-      FROM appointments a) AS da 
+      FROM appointments a 
+      WHERE a.is_available = true) AS da 
         ON da.id_doctor = d.id 
     WHERE d.name = $1
     GROUP BY d.name, d.email, dspe.id_doctor, spe.specialty, l.hospital_name, l.state, l.city, l.street, l.number;
