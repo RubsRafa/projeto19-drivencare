@@ -12,6 +12,20 @@ async function nameDoctors(req, res, next){
     } 
 }
 
+async function specialtyDoctors(req, res, next) {
+    const { specialty } = req.params;
+    
+    try {
+
+        const doctorsSpecialty = await doctorsServices.doctorsSpecialty({ specialty });
+        return res.status(200).send(doctorsSpecialty)
+
+    } catch (err) {
+        next(err)
+    }
+}
+
 export default {
-    nameDoctors
+    nameDoctors,
+    specialtyDoctors
 }

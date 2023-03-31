@@ -8,6 +8,16 @@ async function doctorsName({ name }) {
     return doctor;
 }
 
+
+async function doctorsSpecialty({ specialty }) {
+    const { rowCount, rows: [doctor] } = await doctorsRepositories.getDoctorBySpecialty(specialty);
+    if (!rowCount) throw errors.notFoundError('No doctor found with this specialty');
+
+    return doctor;
+}
+
+
 export default {
-    doctorsName
+    doctorsName,
+    doctorsSpecialty
 }
