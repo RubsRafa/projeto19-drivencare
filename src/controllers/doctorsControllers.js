@@ -25,7 +25,22 @@ async function specialtyDoctors(req, res, next) {
     }
 }
 
+
+async function locationDoctors(req, res, next) {
+    const { idLocation } = req.params;
+
+    try {
+
+        const doctorsLocation = await doctorsServices.doctorsLocation({ idLocation });
+        return res.status(200).send(doctorsLocation)
+        
+    } catch (err) {
+        next(err)
+    }
+}
+
 export default {
     nameDoctors,
-    specialtyDoctors
+    specialtyDoctors,
+    locationDoctors
 }

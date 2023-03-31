@@ -16,8 +16,15 @@ async function doctorsSpecialty({ specialty }) {
     return doctor;
 }
 
+async function doctorsLocation({ idLocation }) {
+    const { rowCount, rows: [doctor] } = await doctorsRepositories.getDoctorByLocation(idLocation);
+    if(!rowCount) throw errors.notFoundError('No doctor found in this location')
+
+    return doctor;
+}
 
 export default {
     doctorsName,
-    doctorsSpecialty
+    doctorsSpecialty,
+    doctorsLocation
 }
