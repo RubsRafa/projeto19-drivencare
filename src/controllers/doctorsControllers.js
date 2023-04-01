@@ -50,9 +50,22 @@ async function signup(req, res, next) {
     }
 }
 
+async function signin(req, res, next) {
+    const { email, password } = req.body;
+
+    try {
+        const token = await doctorsServices.signin({ email, password });
+        return res.status(200).send({ token });
+        
+    } catch (err) {
+        next(err)
+    }
+}
+
 export default {
     nameDoctors,
     specialtyDoctors,
     locationDoctors,
-    signup
+    signup,
+    signin
 }

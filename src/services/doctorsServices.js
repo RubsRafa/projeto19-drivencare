@@ -38,10 +38,23 @@ async function create({ name, email, password, specialty, location }) {
 
 }
 
+async function signin({ email, password }) {
+    const { rowCount, rows: [doctor] } = await doctorsRepositories.findEmail(email);
+    if (!rowCount) throw errors.notFoundError('Incorrect email or password');
+
+    const validPassword = await bcrypt.compare(password, doctor.password);
+    if(!validPassword) throw errors.notFoundError('Incorrect email or password');
+
+    const token = uuidV4();
+    await doctorsRepositories.createSession({ token, id: doctor.id });
+
+    return token;
+}
 
 export default {
     doctorsName,
     doctorsSpecialty,
     doctorsLocation,
-    create
+    create,
+    signin
 }

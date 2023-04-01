@@ -70,11 +70,16 @@ async function addSpecialty(doctor,{ specialty }) {
   return await db.query('INSERT INTO doctors_specialties (id_specialty, id_doctor) VALUES ($1, $2);', [specialty, doctor.id]);
 }
 
+async function createSession({ token, id }) {
+  return await db.query('INSERT INTO sessions_doctors (id_doctor, token) VALUES ($1, $2);', [id, token]);
+}
+
 export default {
   getDoctorByName,
   getDoctorBySpecialty,
   getDoctorByLocation,
   findEmail,
   create,
-  addSpecialty
+  addSpecialty,
+  createSession
 }
