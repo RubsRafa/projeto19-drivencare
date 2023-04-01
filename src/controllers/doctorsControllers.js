@@ -102,6 +102,19 @@ async function confirmAppointment(req, res, next) {
     }
 }
 
+async function addAvailableTime(req, res, next) {
+    const { date, time } = req.body;
+    const { id } = res.locals.user;
+
+    try {
+        const confirmation = await doctorsServices.addAvailableTime(date, time, id);
+        return res.status(201).send(confirmation);
+        
+    } catch (err) {
+        next(err)
+    }
+}
+
 export default {
     nameDoctors,
     specialtyDoctors,
@@ -110,5 +123,6 @@ export default {
     signin,
     myAppointments,
     cancelAppointment,
-    confirmAppointment
+    confirmAppointment,
+    addAvailableTime
 }

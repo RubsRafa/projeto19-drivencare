@@ -19,8 +19,14 @@ const doctorSchemaSignUp = joi.object({
     location: joi.number().not('').required()
 })
 
+const doctorAvailableTime = joi.object({
+    date: joi.string().regex(/^\d{4}-\d{2}-\d{2}$/).isoDate().required(),
+    time: joi.string().regex(/^\d{2}:00:00$/).required()
+})
+
 export default {
     patientSchemaSignUp,
     schemaSignIn,
-    doctorSchemaSignUp
+    doctorSchemaSignUp,
+    doctorAvailableTime
 }

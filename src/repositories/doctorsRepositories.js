@@ -130,6 +130,26 @@ async function confirmation(id_appointment) {
   `, [id_appointment]);
 }
 
+async function alreadyAvailable(id) {
+  return await db.query(`SELECT * FROM appointments WHERE id_doctor = $1;`, [id]);
+}
+
+async function addAvailableTime(date, time, id) {
+  return await db.query('INSERT INTO appointments (id_doctor, date, time, is_available) VALUES ($1, $2, $3, $4);', [id, date, time, true])
+}
+
+async function viewAllAvailableTime(id) {
+  return await db.query(`
+  SELECT a.id AS id_appointment, a.date, a.time, s.status 
+  FROM schedules sc 
+  JOIN appointments a 
+    ON a.id = sc.id_appointment 
+  JOIN status s 
+    ON s.id = sc.id_status 
+  WHERE a.id_doctor = $1; 
+  `, [id])
+}
+
 export default {
   getDoctorByName,
   getDoctorBySpecialty,
@@ -144,5 +164,8 @@ export default {
   isMyAppointment,
   confirmation,
   cancelAppointment,
-  confirmAppointment
+  confirmAppointment,
+  alreadyAvailable,
+  addAvailableTime,
+  viewAllAvailableTime
 }

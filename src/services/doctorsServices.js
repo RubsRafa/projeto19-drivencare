@@ -79,6 +79,20 @@ async function confirmAppointment(id_appointment, id) {
     return confirmation;
 }
 
+async function addAvailableTime(date, time, id) {
+    const { rows: available } = await doctorsRepositories.alreadyAvailable(id);
+    const availableAppointmentAlreadyOpen = available.find((a) => {
+        if (a.date === date && a.time === time) {
+            return a;
+        }
+    })
+    if(availableAppointmentAlreadyOpen) throw errors.conflictError('You´ve already opened this appointment');
+    await doctorsRepositories.addAvailableTime(date, time, id);
+    
+    const confirmation = await doctorsRepositories.viewAllAvailableTime(id);
+    return confirmation; 
+}
+
 
 export default {
     doctorsName,
@@ -88,5 +102,6 @@ export default {
     signin,
     myAppointments,
     cancelAppointment,
-    confirmAppointment
+    confirmAppointment,
+    addAvailableTime
 }
