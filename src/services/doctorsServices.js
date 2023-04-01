@@ -1,7 +1,8 @@
 import errors from "../errors/index.js";
 import doctorsRepositories from "../repositories/doctorsRepositories.js"
 import bcrypt from 'bcrypt';
-import { v4 as uuidV4 } from 'uuid';
+import jwt from 'jsonwebtoken';
+import 'dotenv/config';
 
 
 async function doctorsName({ name }) {
@@ -45,8 +46,7 @@ async function signin({ email, password }) {
     const validPassword = await bcrypt.compare(password, doctor.password);
     if(!validPassword) throw errors.notFoundError('Incorrect email or password');
 
-    const token = uuidV4();
-    await doctorsRepositories.createSession({ token, id: doctor.id });
+    const token = jwt.sign({ id_doctor: doctor.id }, process.env.SECRET_KEY_JWT)
 
     return token;
 }
