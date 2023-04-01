@@ -16,5 +16,6 @@ doctorsRoutes.put('/cancel/:id_appointment', validateTokenDoctor, doctorsControl
 doctorsRoutes.put('/confirm/:id_appointment', validateTokenDoctor, doctorsControllers.confirmAppointment);
 doctorsRoutes.post('/available/time', validateSchema(users.doctorAvailableTime), validateTokenDoctor, doctorsControllers.addAvailableTime);
 doctorsRoutes.get('/appointments/history', validateTokenDoctor, doctorsControllers.viewAppointmentsHistory);
+doctorsRoutes.post('/concluded/:id_appointment', validateTokenDoctor, doctorsControllers.concludedAppointment)
 
 export default doctorsRoutes;

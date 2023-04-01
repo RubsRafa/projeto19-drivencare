@@ -174,6 +174,10 @@ async function viewAppointmentsHistory(id) {
   `, [3, id]);
 }
 
+async function concludedAppointment(id_appointment) {
+  return await db.query('UPDATE schedules SET id_status = $1 WHERE id_appointment = $2;', [3, id_appointment])
+}
+
 export default {
   getDoctorByName,
   getDoctorBySpecialty,
@@ -192,5 +196,6 @@ export default {
   alreadyAvailable,
   addAvailableTime,
   viewAllAvailableTime,
-  viewAppointmentsHistory
+  viewAppointmentsHistory,
+  concludedAppointment
 }

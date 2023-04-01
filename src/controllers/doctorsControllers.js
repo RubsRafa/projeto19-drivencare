@@ -128,6 +128,20 @@ async function viewAppointmentsHistory(req, res, next) {
     }
 }
 
+async function concludedAppointment(req, res, next) {
+    const { id } = res.locals.user;
+    const { id_appointment } = req.params;
+
+    try {
+
+        await doctorsServices.concludedAppointment(id_appointment, id)
+        return res.sendStatus(200)
+        
+    } catch (err) {
+        next(err)
+    }
+}
+
 export default {
     nameDoctors,
     specialtyDoctors,
@@ -138,5 +152,6 @@ export default {
     cancelAppointment,
     confirmAppointment,
     addAvailableTime,
-    viewAppointmentsHistory
+    viewAppointmentsHistory,
+    concludedAppointment
 }

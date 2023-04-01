@@ -62,7 +62,7 @@ async function cancelAppointment(id_appointment, id) {
     const { rowCount, rows: [appointment] } = await doctorsRepositories.isMyAppointment(id_appointment);
     
     if(!rowCount) throw errors.notFoundError('This appointment was not found');
-    if(appointment.id_doctor !== id) throw errors.conflictError("This appointment is not yours to cancel");
+    if(appointment.id_doctor !== id) throw errors.conflictError("You do not have permission to cancel this appointment");
     
     await doctorsRepositories.cancelAppointment(id_appointment);
     
@@ -76,7 +76,7 @@ async function confirmAppointment(id_appointment, id) {
     const { rowCount, rows: [appointment] } = await doctorsRepositories.isMyAppointment(id_appointment);
     
     if(!rowCount) throw errors.notFoundError('This appointment was not found');
-    if(appointment.id_doctor !== id) throw errors.conflictError("This appointment is not yours to confirm");
+    if(appointment.id_doctor !== id) throw errors.conflictError("You do not have permission to confirm this appointment");
 
     await doctorsRepositories.confirmAppointment(id_appointment);
     
@@ -105,6 +105,14 @@ async function viewAppointmentsHistory(id) {
     return appointment;
 }
 
+async function concludedAppointment(id_appointment, id) {
+    const { rowCount, rows: [appointment] } = await doctorsRepositories.isMyAppointment(id_appointment);
+    
+    if(!rowCount) throw errors.notFoundError('This appointment was not found');
+    if(appointment.id_doctor !== id) throw errors.unauthorizedError('You do not have permission to conclude this appointment');
+
+    await doctorsRepositories.concludedAppointment(id_appointment);
+}
 
 export default {
     doctorsName,
@@ -116,5 +124,6 @@ export default {
     cancelAppointment,
     confirmAppointment,
     addAvailableTime,
-    viewAppointmentsHistory
+    viewAppointmentsHistory,
+    concludedAppointment
 }
