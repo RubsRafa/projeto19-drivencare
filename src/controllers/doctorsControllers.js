@@ -62,10 +62,23 @@ async function signin(req, res, next) {
     }
 }
 
+async function myAppointments(req, res, next) {
+    const { id } = res.locals.user;
+    try {
+
+        const myAppointments = await doctorsServices.myAppointments(id);
+        return res.status(200).send(myAppointments)
+        
+    } catch (err) {
+        next(err)
+    }
+}
+
 export default {
     nameDoctors,
     specialtyDoctors,
     locationDoctors,
     signup,
-    signin
+    signin,
+    myAppointments
 }

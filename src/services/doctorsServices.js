@@ -51,10 +51,17 @@ async function signin({ email, password }) {
     return token;
 }
 
+async function myAppointments(id) {
+    const { rows: allMyAppointments } = await doctorsRepositories.allMyAppointments(id);
+    
+    return allMyAppointments
+}
+
 export default {
     doctorsName,
     doctorsSpecialty,
     doctorsLocation,
     create,
-    signin
+    signin,
+    myAppointments
 }

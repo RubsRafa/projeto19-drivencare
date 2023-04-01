@@ -82,6 +82,26 @@ async function findUserById({ id }) {
   return await db.query('SELECT * FROM doctors WHERE id = $1;', [id])
 }
 
+async function allMyAppointments(id) {
+  return await db.query(`
+  SELECT a.id AS id_appointment, a.date, a.time, p.name AS patient_name, ds.specialty 
+  FROM schedules s 
+  JOIN appointments a 
+    ON a.id = s.id_appointment 
+  JOIN patients p 
+    ON p.id = s.id_patient 
+  JOIN (SELECT s.specialty, d.id 
+    FROM doctors_specialties ds 
+    JOIN specialties s 
+      ON s.id = ds.id_specialty 
+    JOIN doctors d 
+      ON d.id = ds.id_doctor) AS ds 
+    ON ds.id = a.id_doctor 
+  JOIN doctors d 
+    ON a.id_doctor = d.id 
+  WHERE d.id = $1;`, [id]);
+}
+
 export default {
   getDoctorByName,
   getDoctorBySpecialty,
@@ -91,5 +111,6 @@ export default {
   addSpecialty,
   createSession,
   findSession,
-  findUserById
+  findUserById,
+  allMyAppointments
 }
