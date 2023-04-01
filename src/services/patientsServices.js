@@ -48,10 +48,15 @@ async function getMyAppointments(user) {
     return AllMyAppointments;
 }
 
+async function viewAppointmentsHistory(id) {
+    const { rows: appointment } = await patientsRepositories.viewAppointmentsHistory(id);
+    return appointment;
+}
 
 export default {
     create,
     signin,
     scheduleAppointment,
-    getMyAppointments
+    getMyAppointments,
+    viewAppointmentsHistory
 }

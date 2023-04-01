@@ -10,5 +10,6 @@ patientsRoutes.post('/signup', validateSchema(users.patientSchemaSignUp), patien
 patientsRoutes.post('/signin', validateSchema(users.schemaSignIn), patientsControllers.signin);
 patientsRoutes.post('/schedule/:id_appointment', validateTokenPatient, patientsControllers.scheduleAppointment)
 patientsRoutes.get('/myAppointments', validateTokenPatient, patientsControllers.allMyAppointments)
+patientsRoutes.get('/appointments/history', validateTokenPatient, patientsControllers.viewAppointmentsHistory);
 
 export default patientsRoutes;

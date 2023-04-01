@@ -55,10 +55,23 @@ async function allMyAppointments(req, res, next) {
     }
 }
 
+async function viewAppointmentsHistory(req, res, next) {
+    const { id } = res.locals.user;
+
+    try {
+
+        const appointmentHistory = await patientsServices.viewAppointmentsHistory(id);
+        return res.status(200).send(appointmentHistory)
+        
+    } catch (err) {
+        next(err);
+    }
+}
 
 export default {
     signup,
     signin,
     scheduleAppointment,
-    allMyAppointments
+    allMyAppointments,
+    viewAppointmentsHistory
 }

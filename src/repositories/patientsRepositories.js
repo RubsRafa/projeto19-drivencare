@@ -81,6 +81,33 @@ async function myAppointments(user) {
     `, [user.id]);
 }
 
+async function viewAppointmentsHistory(id) {
+  return await db.query(`
+  SELECT p.name AS patient, a.date, a.time, d.name AS doctor_name, doctor_spe.specialty, l.hospital_name, s.status 
+  FROM locations l 
+  JOIN doctors d 
+    ON d.id_location = l.id 
+  JOIN appointments a 
+    ON d.id = a.id_doctor 
+  JOIN (SELECT sche.id_patient, sche.id_appointment, s.status 
+    FROM status s 
+    JOIN schedules sche 
+      ON sche.id_status = s.id 
+    WHERE s.id = $1) AS s 
+    ON s.id_appointment = a.id 
+  JOIN patients p 
+    ON p.id = s.id_patient 
+  JOIN (SELECT s.specialty, d.id AS id_patient 
+    FROM doctors_specialties ds 
+    JOIN specialties s 
+      ON s.id = ds.id_specialty 
+    JOIN doctors d 
+      ON d.id = ds.id_doctor) AS doctor_spe 
+  ON doctor_spe.id_patient = s.id_patient
+  WHERE p.id = $2;
+  `, [3, id]);
+}
+
 export default {
     findEmail,
     create,
@@ -92,5 +119,6 @@ export default {
     scheduleAppointment,
     removeAppointment,
     myAppointments,
-    myScheduledyAppointments
+    myScheduledyAppointments,
+    viewAppointmentsHistory
 }

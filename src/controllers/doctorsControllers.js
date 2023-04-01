@@ -120,7 +120,7 @@ async function viewAppointmentsHistory(req, res, next) {
 
     try {
 
-        const appointmentHistory = await doctorsServicesl.viewAppointmentsHistory(id);
+        const appointmentHistory = await doctorsServices.viewAppointmentsHistory(id);
         return res.status(200).send(appointmentHistory);
         
     } catch (err) {
