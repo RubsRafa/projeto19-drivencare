@@ -33,7 +33,7 @@ async function scheduleAppointment(id_appointment, user) {
 }
 
 async function removeAppointment(id_appointment) {
-    return await db.query('UPDATE appointments SET is_available = false WHERE id = $1;', [id_appointment]);
+    return await db.query('UPDATE appointments SET is_available = $1 WHERE id = $2;', [false, id_appointment]);
 }
 
 async function myScheduledyAppointments(id_appointment) {
