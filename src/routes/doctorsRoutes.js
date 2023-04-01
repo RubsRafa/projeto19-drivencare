@@ -12,5 +12,7 @@ doctorsRoutes.get('/location/:idLocation', doctorsControllers.locationDoctors);
 doctorsRoutes.post('/signup', validateSchema(users.doctorSchemaSignUp), doctorsControllers.signup);
 doctorsRoutes.post('/signin', validateSchema(users.schemaSignIn), doctorsControllers.signin);
 doctorsRoutes.get('/myAppointments', validateTokenDoctor, doctorsControllers.myAppointments);
+doctorsRoutes.put('/cancel/:id_appointment', validateTokenDoctor, doctorsControllers.cancelAppointment);
+doctorsRoutes.put('/confirm/:id_appointment', validateTokenDoctor, doctorsControllers.confirmAppointment);
 
 export default doctorsRoutes;

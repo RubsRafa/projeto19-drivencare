@@ -102,6 +102,34 @@ async function allMyAppointments(id) {
   WHERE d.id = $1;`, [id]);
 }
 
+async function isMyAppointment(id_appointment) {
+  return await db.query(`
+  SELECT * FROM appointments WHERE id = $1;
+  `, [id_appointment]);
+}
+
+async function cancelAppointment(id_appointment) {
+  return await db.query(`UPDATE FROM schedules SET id_status = $1 WHERE id_appointment = $2;`, [4, id_appointment]);
+}
+
+async function confirmAppointment(id_appointment) {
+  return await db.query(`UPDATE FROM schedules SET id_status = $1 WHERE id_appointment = $2;`, [2, id_appointment]);
+}
+
+async function confirmation(id_appointment) {
+  return await db.query(`
+  SELECT a.id AS id_appointment, a.date, a.time, p.name, s.status 
+  FROM schedules sc 
+  JOIN appointments a 
+    ON a.id = sc.id_appointment 
+  JOIN patients p 
+    ON p.id = sc.id_patient 
+  JOIN status s 
+    ON s.id = sc.id_status 
+  WHERE a.id = $1; 
+  `, [id_appointment]);
+}
+
 export default {
   getDoctorByName,
   getDoctorBySpecialty,
@@ -112,5 +140,9 @@ export default {
   createSession,
   findSession,
   findUserById,
-  allMyAppointments
+  allMyAppointments,
+  isMyAppointment,
+  confirmation,
+  cancelAppointment,
+  confirmAppointment
 }

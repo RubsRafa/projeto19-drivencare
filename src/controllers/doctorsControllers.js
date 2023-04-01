@@ -74,11 +74,41 @@ async function myAppointments(req, res, next) {
     }
 }
 
+async function cancelAppointment(req, res, next) {
+    const { id_appointment } = req.params;
+    const { id } = res.locals.user;
+
+    try {
+
+        const confirmation = await doctorsServices.cancelAppointment(id_appointment, id);
+        return res.status(200).send('This appointment was canceled', confirmation)
+        
+    } catch (err) {
+        next(err)
+    }
+}
+
+async function confirmAppointment(req, res, next) {
+    const { id_appointment } = req.params;
+    const { id } = res.locals.user;
+
+    try {
+
+        const confirmation = await doctorsServices.confirmAppointment(id_appointment, id);
+        return res.status(200).send('This appointment was confirmed', confirmation)
+        
+    } catch (err) {
+        next(err)
+    }
+}
+
 export default {
     nameDoctors,
     specialtyDoctors,
     locationDoctors,
     signup,
     signin,
-    myAppointments
+    myAppointments,
+    cancelAppointment,
+    confirmAppointment
 }

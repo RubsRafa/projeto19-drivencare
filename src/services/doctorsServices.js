@@ -57,11 +57,36 @@ async function myAppointments(id) {
     return allMyAppointments
 }
 
+async function cancelAppointment(id_appointment, id) {
+    const { rowCount, rows: [appointment] } = await doctorsRepositories.isMyAppointment(id_appointment);
+    if(!rowCount) throw errors.notFoundError('This appointment was not found');
+    if(appointment.id_doctor !== id) throw errors.conflictError("This appointment is not yours to cancel");
+
+    await doctorsRepositories.cancelAppointment(id_appointment);
+    const confirmation = await doctorsRepositories.confirmation(id_appointment);
+
+    return confirmation;
+}
+
+async function confirmAppointment(id_appointment, id) {
+    const { rowCount, rows: [appointment] } = await doctorsRepositories.isMyAppointment(id_appointment);
+    if(!rowCount) throw errors.notFoundError('This appointment was not found');
+    if(appointment.id_doctor !== id) throw errors.conflictError("This appointment is not yours to confirm");
+
+    await doctorsRepositories.confirmAppointment(id_appointment);
+    const confirmation = await doctorsRepositories.confirmation(id_appointment);
+
+    return confirmation;
+}
+
+
 export default {
     doctorsName,
     doctorsSpecialty,
     doctorsLocation,
     create,
     signin,
-    myAppointments
+    myAppointments,
+    cancelAppointment,
+    confirmAppointment
 }
