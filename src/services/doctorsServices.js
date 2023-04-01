@@ -93,6 +93,11 @@ async function addAvailableTime(date, time, id) {
     return confirmation; 
 }
 
+async function viewAppointmentsHistory(id) {
+    const { rows: appointment } = await doctorsRepositories.viewAppointmentsHistory(id);
+    return appointment;
+}
+
 
 export default {
     doctorsName,
@@ -103,5 +108,6 @@ export default {
     myAppointments,
     cancelAppointment,
     confirmAppointment,
-    addAvailableTime
+    addAvailableTime,
+    viewAppointmentsHistory
 }
