@@ -66,16 +66,7 @@ async function create({ name, email, password, location }) {
 }
 
 async function addSpecialty(doctor,{ specialty }) {
-  console.log(doctor.id, specialty)
   return await db.query('INSERT INTO doctors_specialties (id_specialty, id_doctor) VALUES ($1, $2);', [specialty, doctor.id]);
-}
-
-async function createSession({ token, id }) {
-  return await db.query('INSERT INTO sessions_doctors (id_doctor, token) VALUES ($1, $2);', [id, token]);
-}
-
-async function findSession(token) {
-  return await db.query('SELECT * FROM sessions_doctors WHERE token = $1;', [token])
 }
 
 async function findUserById({ id }) {
@@ -113,7 +104,6 @@ async function cancelAppointment(id_appointment) {
 }
 
 async function confirmAppointment(id_appointment) {
-  console.log(id_appointment)
   return await db.query(`UPDATE schedules SET id_status = $1 WHERE id_appointment = $2;`, [2, id_appointment]);
 }
 
@@ -185,8 +175,6 @@ export default {
   findEmail,
   create,
   addSpecialty,
-  createSession,
-  findSession,
   findUserById,
   allMyAppointments,
   isMyAppointment,

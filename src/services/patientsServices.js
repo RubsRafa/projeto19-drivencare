@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
-import { v4 as uuidV4 } from 'uuid';
 import errors from '../errors/index.js';
 import patientsRepositories from '../repositories/patientsRepositories.js'
+import jwt from 'jsonwebtoken';
+import "dotenv/config";
 
 async function create({ name, email, password }) {
     const { rowCount } = await patientsRepositories.findEmail(email);
@@ -18,8 +19,7 @@ async function signin({ email, password }){
     const validPassword = await bcrypt.compare(password, patient.password);
     if(!validPassword) throw errors.notFoundError('Incorrect email or password');
 
-    const token = uuidV4();
-    await patientsRepositories.createSession({ token, id_patient: patient.id})
+    const token = jwt.sign({ id_patient: patient.id }, process.env.SECRET_KEY_JWT)
 
     return token;
 }
