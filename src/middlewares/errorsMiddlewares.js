@@ -13,4 +13,6 @@ export function handleErrors(err, req, res, next) {
     if (err.name === "ForbiddenError") {
         return res.status(httpStatus.FORBIDDEN).SEND({ message: err.message})
     }
+
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ error: "Internal Server Error", message: "Internal Server Error" });
 }

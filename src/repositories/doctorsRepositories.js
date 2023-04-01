@@ -74,6 +74,14 @@ async function createSession({ token, id }) {
   return await db.query('INSERT INTO sessions_doctors (id_doctor, token) VALUES ($1, $2);', [id, token]);
 }
 
+async function findSession(token) {
+  return await db.query('SELECT * FROM sessions_doctors WHERE token = $1;', [token])
+}
+
+async function findUserById({ id }) {
+  return await db.query('SELECT * FROM doctors WHERE id = $1;', [id])
+}
+
 export default {
   getDoctorByName,
   getDoctorBySpecialty,
@@ -81,5 +89,7 @@ export default {
   findEmail,
   create,
   addSpecialty,
-  createSession
+  createSession,
+  findSession,
+  findUserById
 }
