@@ -104,16 +104,17 @@ async function allMyAppointments(id) {
 
 async function isMyAppointment(id_appointment) {
   return await db.query(`
-  SELECT * FROM appointments WHERE id = $1;
-  `, [id_appointment]);
+  SELECT * FROM appointments WHERE id = $1 AND is_available = $2;
+  `, [id_appointment, false]);
 }
 
 async function cancelAppointment(id_appointment) {
-  return await db.query(`UPDATE FROM schedules SET id_status = $1 WHERE id_appointment = $2;`, [4, id_appointment]);
+  return await db.query(`UPDATE schedules SET id_status = $1 WHERE id_appointment = $2;`, [4, id_appointment]);
 }
 
 async function confirmAppointment(id_appointment) {
-  return await db.query(`UPDATE FROM schedules SET id_status = $1 WHERE id_appointment = $2;`, [2, id_appointment]);
+  console.log(id_appointment)
+  return await db.query(`UPDATE schedules SET id_status = $1 WHERE id_appointment = $2;`, [2, id_appointment]);
 }
 
 async function confirmation(id_appointment) {
@@ -140,14 +141,10 @@ async function addAvailableTime(date, time, id) {
 
 async function viewAllAvailableTime(id) {
   return await db.query(`
-  SELECT a.id AS id_appointment, a.date, a.time, s.status 
-  FROM schedules sc 
-  JOIN appointments a 
-    ON a.id = sc.id_appointment 
-  JOIN status s 
-    ON s.id = sc.id_status 
-  WHERE a.id_doctor = $1; 
-  `, [id])
+  SELECT a.id AS id_appointment, a.date, a.time
+  FROM appointments a 
+  WHERE a.id_doctor = $1 AND a.is_available = $2; 
+  `, [id, true])
 }
 
 async function viewAppointmentsHistory(id) {

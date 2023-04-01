@@ -81,7 +81,7 @@ async function cancelAppointment(req, res, next) {
     try {
 
         const confirmation = await doctorsServices.cancelAppointment(id_appointment, id);
-        return res.status(200).send('This appointment was canceled', confirmation)
+        return res.status(200).send(confirmation)
         
     } catch (err) {
         next(err)
@@ -95,7 +95,7 @@ async function confirmAppointment(req, res, next) {
     try {
 
         const confirmation = await doctorsServices.confirmAppointment(id_appointment, id);
-        return res.status(200).send('This appointment was confirmed', confirmation)
+        return res.status(200).send(confirmation)
         
     } catch (err) {
         next(err)

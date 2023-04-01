@@ -58,29 +58,36 @@ async function myAppointments(id) {
 }
 
 async function cancelAppointment(id_appointment, id) {
+   
     const { rowCount, rows: [appointment] } = await doctorsRepositories.isMyAppointment(id_appointment);
+    
     if(!rowCount) throw errors.notFoundError('This appointment was not found');
     if(appointment.id_doctor !== id) throw errors.conflictError("This appointment is not yours to cancel");
-
+    
     await doctorsRepositories.cancelAppointment(id_appointment);
-    const confirmation = await doctorsRepositories.confirmation(id_appointment);
+    
+    const {rows: confirmation} = await doctorsRepositories.confirmation(id_appointment);
 
     return confirmation;
 }
 
 async function confirmAppointment(id_appointment, id) {
+    
     const { rowCount, rows: [appointment] } = await doctorsRepositories.isMyAppointment(id_appointment);
+    
     if(!rowCount) throw errors.notFoundError('This appointment was not found');
     if(appointment.id_doctor !== id) throw errors.conflictError("This appointment is not yours to confirm");
 
     await doctorsRepositories.confirmAppointment(id_appointment);
-    const confirmation = await doctorsRepositories.confirmation(id_appointment);
+    
+    const { rows: confirmation} = await doctorsRepositories.confirmation(id_appointment);
 
     return confirmation;
 }
 
 async function addAvailableTime(date, time, id) {
     const { rows: available } = await doctorsRepositories.alreadyAvailable(id);
+    
     const availableAppointmentAlreadyOpen = available.find((a) => {
         if (a.date === date && a.time === time) {
             return a;
@@ -89,7 +96,7 @@ async function addAvailableTime(date, time, id) {
     if(availableAppointmentAlreadyOpen) throw errors.conflictError('You´ve already opened this appointment');
     await doctorsRepositories.addAvailableTime(date, time, id);
     
-    const confirmation = await doctorsRepositories.viewAllAvailableTime(id);
+    const { rows: confirmation} = await doctorsRepositories.viewAllAvailableTime(id);
     return confirmation; 
 }
 
