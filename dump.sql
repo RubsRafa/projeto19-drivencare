@@ -27,8 +27,9 @@ SET default_table_access_method = heap;
 CREATE TABLE public.appointments (
     id integer NOT NULL,
     id_doctor integer NOT NULL,
-    date date NOT NULL,
-    "time" time without time zone NOT NULL,
+    date text NOT NULL,
+    "time" text NOT NULL,
+    is_available boolean DEFAULT true NOT NULL,
     created_at timestamp without time zone DEFAULT now() NOT NULL
 );
 
@@ -94,7 +95,8 @@ ALTER SEQUENCE public.doctors_id_seq OWNED BY public.doctors.id;
 CREATE TABLE public.doctors_specialties (
     id integer NOT NULL,
     id_specialty integer NOT NULL,
-    id_doctor integer NOT NULL
+    id_doctor integer NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -128,7 +130,8 @@ CREATE TABLE public.locations (
     state text NOT NULL,
     city text NOT NULL,
     street text NOT NULL,
-    number text NOT NULL
+    number text NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -216,70 +219,6 @@ CREATE SEQUENCE public.schedules_id_seq
 --
 
 ALTER SEQUENCE public.schedules_id_seq OWNED BY public.schedules.id;
-
-
---
--- Name: sessions_doctors; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.sessions_doctors (
-    id integer NOT NULL,
-    id_doctor integer NOT NULL,
-    token text NOT NULL,
-    created_at timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
---
--- Name: sessions_doctors_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.sessions_doctors_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: sessions_doctors_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.sessions_doctors_id_seq OWNED BY public.sessions_doctors.id;
-
-
---
--- Name: sessions_patients; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.sessions_patients (
-    id integer NOT NULL,
-    id_patient integer NOT NULL,
-    token text NOT NULL,
-    created_at timestamp without time zone DEFAULT now() NOT NULL
-);
-
-
---
--- Name: sessions_patients_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.sessions_patients_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: sessions_patients_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.sessions_patients_id_seq OWNED BY public.sessions_patients.id;
 
 
 --
@@ -385,20 +324,6 @@ ALTER TABLE ONLY public.schedules ALTER COLUMN id SET DEFAULT nextval('public.sc
 
 
 --
--- Name: sessions_doctors id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sessions_doctors ALTER COLUMN id SET DEFAULT nextval('public.sessions_doctors_id_seq'::regclass);
-
-
---
--- Name: sessions_patients id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sessions_patients ALTER COLUMN id SET DEFAULT nextval('public.sessions_patients_id_seq'::regclass);
-
-
---
 -- Name: specialties id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -449,18 +374,6 @@ ALTER TABLE ONLY public.status ALTER COLUMN id SET DEFAULT nextval('public.statu
 
 
 --
--- Data for Name: sessions_doctors; Type: TABLE DATA; Schema: public; Owner: -
---
-
-
-
---
--- Data for Name: sessions_patients; Type: TABLE DATA; Schema: public; Owner: -
---
-
-
-
---
 -- Data for Name: specialties; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -470,6 +383,10 @@ ALTER TABLE ONLY public.status ALTER COLUMN id SET DEFAULT nextval('public.statu
 -- Data for Name: status; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.status VALUES (1, 'Scheduled');
+INSERT INTO public.status VALUES (2, 'Confirmed');
+INSERT INTO public.status VALUES (3, 'Accomplished');
+INSERT INTO public.status VALUES (4, 'Canceled');
 
 
 --
@@ -515,20 +432,6 @@ SELECT pg_catalog.setval('public.schedules_id_seq', 1, false);
 
 
 --
--- Name: sessions_doctors_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public.sessions_doctors_id_seq', 1, false);
-
-
---
--- Name: sessions_patients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public.sessions_patients_id_seq', 1, false);
-
-
---
 -- Name: specialties_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -539,7 +442,7 @@ SELECT pg_catalog.setval('public.specialties_id_seq', 1, false);
 -- Name: status_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.status_id_seq', 1, false);
+SELECT pg_catalog.setval('public.status_id_seq', 4, true);
 
 
 --
@@ -607,22 +510,6 @@ ALTER TABLE ONLY public.schedules
 
 
 --
--- Name: sessions_doctors sessions_doctors_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sessions_doctors
-    ADD CONSTRAINT sessions_doctors_pkey PRIMARY KEY (id);
-
-
---
--- Name: sessions_patients sessions_patients_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sessions_patients
-    ADD CONSTRAINT sessions_patients_pkey PRIMARY KEY (id);
-
-
---
 -- Name: specialties specialties_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -643,7 +530,7 @@ ALTER TABLE ONLY public.status
 --
 
 ALTER TABLE ONLY public.doctors_specialties
-    ADD CONSTRAINT fk_doctors_id FOREIGN KEY (id_doctor) REFERENCES public.doctors(id);
+    ADD CONSTRAINT fk_doctors_id FOREIGN KEY (id_doctor) REFERENCES public.doctors(id) ON DELETE CASCADE;
 
 
 --
@@ -651,7 +538,7 @@ ALTER TABLE ONLY public.doctors_specialties
 --
 
 ALTER TABLE ONLY public.doctors
-    ADD CONSTRAINT fk_doctors_location FOREIGN KEY (id_location) REFERENCES public.locations(id);
+    ADD CONSTRAINT fk_doctors_location FOREIGN KEY (id_location) REFERENCES public.locations(id) ON DELETE CASCADE;
 
 
 --
@@ -659,7 +546,7 @@ ALTER TABLE ONLY public.doctors
 --
 
 ALTER TABLE ONLY public.doctors_specialties
-    ADD CONSTRAINT fk_doctors_specialties FOREIGN KEY (id_specialty) REFERENCES public.specialties(id);
+    ADD CONSTRAINT fk_doctors_specialties FOREIGN KEY (id_specialty) REFERENCES public.specialties(id) ON DELETE CASCADE;
 
 
 --
@@ -667,7 +554,7 @@ ALTER TABLE ONLY public.doctors_specialties
 --
 
 ALTER TABLE ONLY public.appointments
-    ADD CONSTRAINT fk_id_doctor FOREIGN KEY (id_doctor) REFERENCES public.doctors(id);
+    ADD CONSTRAINT fk_id_doctor FOREIGN KEY (id_doctor) REFERENCES public.doctors(id) ON DELETE CASCADE;
 
 
 --
@@ -675,7 +562,7 @@ ALTER TABLE ONLY public.appointments
 --
 
 ALTER TABLE ONLY public.schedules
-    ADD CONSTRAINT fk_schedule_patient FOREIGN KEY (id_patient) REFERENCES public.patients(id);
+    ADD CONSTRAINT fk_schedule_patient FOREIGN KEY (id_patient) REFERENCES public.patients(id) ON DELETE CASCADE;
 
 
 --
@@ -683,23 +570,7 @@ ALTER TABLE ONLY public.schedules
 --
 
 ALTER TABLE ONLY public.schedules
-    ADD CONSTRAINT fk_schedules_status FOREIGN KEY (id_status) REFERENCES public.status(id);
-
-
---
--- Name: sessions_doctors fk_sessions_doctors; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sessions_doctors
-    ADD CONSTRAINT fk_sessions_doctors FOREIGN KEY (id_doctor) REFERENCES public.doctors(id);
-
-
---
--- Name: sessions_patients fk_sessions_patients; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sessions_patients
-    ADD CONSTRAINT fk_sessions_patients FOREIGN KEY (id_patient) REFERENCES public.patients(id);
+    ADD CONSTRAINT fk_schedules_status FOREIGN KEY (id_status) REFERENCES public.status(id) ON DELETE CASCADE;
 
 
 --
@@ -707,7 +578,7 @@ ALTER TABLE ONLY public.sessions_patients
 --
 
 ALTER TABLE ONLY public.schedules
-    ADD CONSTRAINT fk_shcedule_appointment FOREIGN KEY (id_appointment) REFERENCES public.appointments(id);
+    ADD CONSTRAINT fk_shcedule_appointment FOREIGN KEY (id_appointment) REFERENCES public.appointments(id) ON DELETE CASCADE;
 
 
 --
